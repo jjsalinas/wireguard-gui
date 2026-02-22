@@ -1,9 +1,11 @@
 const { app, BrowserWindow } = require("electron/main");
 
 const createWindow = () => {
+  const path = require("path");
   const win = new BrowserWindow({
     width: 800,
     height: 600,
+    icon: path.join(__dirname, "../docs/icon.png")
   });
 
   win.loadFile("src/gui/gui.html");
