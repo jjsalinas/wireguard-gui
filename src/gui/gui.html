@@ -1,102 +1,273 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'"
+      content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com data:;"
     />
-    <meta
-      http-equiv="X-Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'"
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&family=Syne:wght@400;600;700&family=Mulish:wght@400;500;600&display=swap"
+      rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
-    <title>Wireguard GUI</title>
+    <title>WireGuard GUI</title>
   </head>
   <body>
-    <h1>Wireguard GUI!</h1>
-    <div id="gui-wrapper">
-      <div id="left-side-wrapper" class="side-wrapper">
-        <div class="conf-server-form">
-          <h2>Server Side</h2>
-          <form>
-            <label>Interface:</label>
-            <input value="iface0" />
-            <br />
-            <label>Server address:</label>
-            <input value="11.11.11.1/24" />
-            <br />
-            <label>Port:</label>
-            <input value="port-number" />
-            <br />
-            <label>Clients view each other as in LAN:</label>
-            <input value="true" />
-            <br />
-            <label>List of ports to enable traffic on:</label>
-            <input value="port1, port2" />
-            <br />
-            <label>Server private key:</label>
-            <input value="veryprivatekey" />
-            <br />
-            <label>Server public key:</label>
-            <input value="verypublickey" />
-            <br />
-            <label>Running in docker?:</label>
-            <input value="true" />
-            <br />
-            <label>Docker HOST interface:</label>
-            <input value="iface1" />
-            <br />
-            <button>Sync</button>
-          </form>
-        </div>
-        <div class="conf-server">
-          <form>
-            <label>SERVER CONF</label>
-            <br />
-            <input
-              class="conf-server-input"
-              value="COMPLETE WORKING CONF HERE"
-            />
-          </form>
-        </div>
+    <!-- Header -->
+    <header class="app-header">
+      <div class="app-header-left">
+        <img src="../../wireguard-icon.svg" class="logo-icon" alt="WireGuard" />
+        <span class="app-title">WireGuard <em>GUI</em></span>
       </div>
-      <div id="right-side-wrapper" class="side-wrapper">
-        <div class="conf-client-form">
-          <h2>Client Side</h2>
-          <form>
-            <label>Client picker</label>
-            <select name="Test">
-              <option value="1">Test A</option>
-              <option value="2">Test B</option>
-            </select>
-            <br />
-
-            <label>Internet traffic enabled:</label>
-            <input value="true" />
-            <br />
-            <label>Client private key:</label>
-            <input value="veryprivateclientkey" />
-            <br />
-            <label>Client private key:</label>
-            <input value="verypublicclientkey" />
-            <br />
-          </form>
-        </div>
-        <div class="conf-server">
-          <form>
-            <label>SERVER CONF</label>
-            <br />
-            <input
-              class="conf-server-input"
-              value="COMPLETE WORKING CONF HERE"
+      <div class="app-header-right">
+        <button id="load-btn" class="btn btn-ghost" title="Load JSON config">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          Load
+        </button>
+        <button
+          id="download-btn"
+          class="btn btn-ghost"
+          title="Save JSON config"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          Save JSON
+        </button>
+        <button id="sync-btn" class="btn btn-primary">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <polyline points="23 4 23 10 17 10" />
+            <polyline points="1 20 1 14 7 14" />
+            <path
+              d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"
             />
-          </form>
-        </div>
+          </svg>
+          Sync
+        </button>
       </div>
-    </div>
+    </header>
 
-    <script type="module" src="gui.js"></script>
+    <!-- Main two-panel layout -->
+    <main class="gui-layout">
+      <!-- LEFT: Server -->
+      <section class="panel panel-server">
+        <div class="panel-header">
+          <span class="panel-badge badge-server">SERVER</span>
+          <h2>Server Configuration</h2>
+        </div>
+
+        <div class="panel-body">
+          <!-- Form -->
+          <div class="form-section">
+            <div class="section-label">Interface</div>
+
+            <div class="field-row">
+              <label for="s-iface">Network interface</label>
+              <input
+                id="s-iface"
+                type="text"
+                placeholder="wg0"
+                class="mono-input"
+              />
+            </div>
+            <div class="field-row">
+              <label for="s-address">Server address (CIDR)</label>
+              <input
+                id="s-address"
+                type="text"
+                placeholder="10.0.0.1/24"
+                class="mono-input"
+              />
+            </div>
+            <div class="field-row">
+              <label for="s-port">Listen port</label>
+              <input
+                id="s-port"
+                type="text"
+                placeholder="51820"
+                class="mono-input"
+              />
+            </div>
+
+            <div class="section-label" style="margin-top: 1rem">Routing</div>
+
+            <div class="field-row toggle-row">
+              <label for="s-lan">LAN between clients</label>
+              <label class="toggle-switch">
+                <input id="s-lan" type="checkbox" />
+                <span class="toggle-slider"></span>
+              </label>
+              <span class="toggle-label" id="s-lan-label">Disabled</span>
+            </div>
+            <div class="field-row">
+              <label for="s-ports">Forwarded ports</label>
+              <input
+                id="s-ports"
+                type="text"
+                placeholder="22, 80, 443"
+                class="mono-input"
+              />
+              <span class="field-sub">Comma-separated list</span>
+            </div>
+
+            <div class="section-label" style="margin-top: 1rem">Keys</div>
+
+            <div class="field-row">
+              <label for="s-privkey">Private key</label>
+              <input
+                id="s-privkey"
+                type="text"
+                placeholder="Base64 private key"
+                class="mono-input key-input"
+              />
+            </div>
+            <div class="field-row">
+              <label for="s-pubkey">Public key</label>
+              <input
+                id="s-pubkey"
+                type="text"
+                placeholder="Base64 public key"
+                class="mono-input key-input"
+              />
+            </div>
+
+            <div class="section-label" style="margin-top: 1rem">Connection</div>
+
+            <div class="field-row">
+              <label for="s-pubaddr">Public address</label>
+              <input
+                id="s-pubaddr"
+                type="text"
+                placeholder="vpn.example.com or 203.0.113.1"
+                class="mono-input"
+              />
+              <span class="field-sub">Used as Endpoint in client configs</span>
+            </div>
+
+            <div class="section-label" style="margin-top: 1rem">Docker</div>
+
+            <div class="field-row toggle-row">
+              <label for="s-docker">Running in Docker</label>
+              <label class="toggle-switch">
+                <input id="s-docker" type="checkbox" />
+                <span class="toggle-slider"></span>
+              </label>
+              <span class="toggle-label" id="s-docker-label">No</span>
+            </div>
+            <div class="field-row" id="docker-iface-row" style="display: none">
+              <label for="s-docker-iface">Docker host interface</label>
+              <input
+                id="s-docker-iface"
+                type="text"
+                placeholder="eth0"
+                class="mono-input"
+              />
+            </div>
+          </div>
+
+          <!-- Server conf output -->
+          <div class="conf-output-section">
+            <div class="conf-output-header">
+              <span class="conf-output-title">wg0.conf</span>
+              <button id="copy-server-btn" class="btn btn-ghost btn-sm">
+                Copy
+              </button>
+            </div>
+            <pre id="server-conf-output" class="conf-output">
+# Fill in server fields and click Sync</pre
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: Clients -->
+      <section class="panel panel-client">
+        <div class="panel-header">
+          <span class="panel-badge badge-client">CLIENT</span>
+          <h2>Client Configuration</h2>
+        </div>
+
+        <div class="panel-body">
+          <!-- Client picker + add -->
+          <div class="client-tabs-bar">
+            <div id="client-tabs" class="client-tabs"></div>
+            <button
+              id="add-client-btn"
+              class="btn btn-add"
+              title="Add new client"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              New client
+            </button>
+          </div>
+
+          <!-- Client form -->
+          <div class="form-section" id="client-form-area">
+            <div class="empty-client">
+              <svg
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 8v4m0 4h.01" />
+              </svg>
+              <p>Add a client to get started</p>
+            </div>
+          </div>
+
+          <!-- Client conf output -->
+          <div class="conf-output-section">
+            <div class="conf-output-header">
+              <span class="conf-output-title">client.conf</span>
+              <span id="client-conf-name" class="conf-client-name"></span>
+              <button id="copy-client-btn" class="btn btn-ghost btn-sm">
+                Copy
+              </button>
+            </div>
+            <pre id="client-conf-output" class="conf-output">
+# No client selected</pre
+            >
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="gui.js"></script>
   </body>
 </html>

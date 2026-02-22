@@ -1,69 +1,735 @@
-#gui-wrapper {
-  width: 100%;
-  height: 80vh;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+/* WireGuard GUI — styles.css
+   Soft sage-and-cream palette, Fira Mono for config output */
+
+/*****************************************************************************
+ * Custom properties
+ *****************************************************************************/
+
+:root {
+  /* Palette */
+  --sage-50: #f4f7f4;
+  --sage-100: #e8efe8;
+  --sage-200: #cfdecf;
+  --sage-300: #a8c5a8;
+  --sage-400: #7aa87a;
+  --sage-500: #5a8f5a;
+  --sage-600: #437043;
+
+  --cream-50: #fdfcf8;
+  --cream-100: #f9f6ee;
+  --cream-200: #f0ead8;
+
+  --slate-50: #f5f6f8;
+  --slate-100: #e8eaee;
+  --slate-200: #cdd1da;
+  --slate-400: #8b93a5;
+  --slate-600: #4a5568;
+  --slate-700: #374151;
+  --slate-800: #1f2937;
+  --slate-900: #111827;
+
+  --rose-100: #ffe4e6;
+  --rose-500: #f43f5e;
+  --rose-600: #e11d48;
+
+  --sky-100: #e0f2fe;
+  --sky-500: #0ea5e9;
+
+  /* Semantic */
+  --bg: var(--cream-50);
+  --bg-panel: #ffffff;
+  --bg-section: var(--sage-50);
+  --bg-output: var(--slate-800);
+
+  --border: var(--slate-100);
+  --border-mid: var(--slate-200);
+
+  --text-primary: var(--slate-800);
+  --text-secondary: var(--slate-600);
+  --text-muted: var(--slate-400);
+  --text-output: #d4e6c3;
+
+  --accent: var(--sage-500);
+  --accent-light: var(--sage-100);
+  --accent-hover: var(--sage-600);
+
+  --invalid-bg: var(--rose-100);
+  --invalid-border: var(--rose-500);
+  --invalid-text: var(--rose-600);
+
+  --valid-border: var(--sage-400);
+
+  /* Sizing */
+  --header-h: 52px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  /* Typography */
+  --font-ui: "Mulish", system-ui, sans-serif;
+  --font-display: "Syne", system-ui, sans-serif;
+  --font-mono: "Fira Mono", "Fira Code", monospace;
+
+  /* Transitions */
+  --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.side-wrapper {
+/*****************************************************************************
+ * Reset
+ *****************************************************************************/
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
   height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-ui);
+  background: var(--bg);
+  color: var(--text-primary);
+  font-size: 13px;
+  line-height: 1.5;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  border-radius: 0.5rem;
-  border: 1px solid black;
-  gap: 2rem;
-  margin: 0.3rem;
 }
 
-#left-side-wrapper {
+/*****************************************************************************
+ * Header
+ *****************************************************************************/
+
+.app-header {
+  height: var(--header-h);
+  min-height: var(--header-h);
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.25rem;
+  gap: 1rem;
+  flex-shrink: 0;
+  -webkit-app-region: drag;
+}
+
+/* Buttons inside the draggable header must opt back out */
+.app-header > * {
+  -webkit-app-region: no-drag;
+}
+
+.app-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.logo-icon {
+  width: 22px;
+  height: 22px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.app-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--slate-800);
+  letter-spacing: -0.02em;
+}
+
+.app-title em {
+  font-style: normal;
+  color: var(--accent);
+}
+
+.app-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/*****************************************************************************
+ * Main layout
+ *****************************************************************************/
+
+.gui-layout {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/*****************************************************************************
+ * Panels
+ *****************************************************************************/
+
+.panel {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  border-right: 1px solid var(--border);
+}
+
+.panel:last-child {
+  border-right: none;
+}
+
+.panel-header {
+  padding: 0.9rem 1.25rem 0.7rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--bg-panel);
+  flex-shrink: 0;
+}
+
+.panel-header h2 {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--text-secondary);
+}
+
+.panel-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.badge-server {
+  background: var(--sage-100);
+  color: var(--sage-600);
+  border: 1px solid var(--sage-200);
+}
+
+.badge-client {
+  background: var(--sky-100);
+  color: var(--sky-500);
+  border: 1px solid #bae6fd;
+}
+
+.panel-body {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/*****************************************************************************
+ * Form section
+ *****************************************************************************/
+
+.form-section {
+  flex: 0 0 auto;
+  padding: 1rem 1.25rem 0.5rem;
+  background: var(--bg-panel);
+  overflow-y: auto;
+  max-height: 46%;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-label {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+/*****************************************************************************
+ * Fields
+ *****************************************************************************/
+
+.field-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 0.55rem;
+  position: relative;
+}
+
+.field-row label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.01em;
+}
+
+.field-row input[type="text"],
+.field-row input[type="password"] {
   width: 100%;
-  height: 100%;
+  height: 30px;
+  padding: 0 0.6rem;
+  border: 1.5px solid var(--border-mid);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  transition:
+    border-color 0.15s var(--ease),
+    box-shadow 0.15s var(--ease),
+    background 0.15s;
+  outline: none;
+}
 
-  .conf-server-form {
-      width: 90%;
-      margin: 1rem;
-    > form {
-      display: flex;
-      flex-direction: column;
-    }
+.field-row input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(90, 143, 90, 0.12);
+  background: #fff;
+}
+
+.mono-input {
+  font-family: var(--font-mono) !important;
+  font-size: 11.5px !important;
+}
+
+.key-input {
+  font-size: 10.5px !important;
+  letter-spacing: 0.02em;
+}
+
+/* Validation states */
+.field-invalid {
+  border-color: var(--invalid-border) !important;
+  background: var(--invalid-bg) !important;
+}
+
+.field-invalid:focus {
+  box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.12) !important;
+}
+
+.field-valid {
+  border-color: var(--valid-border) !important;
+}
+
+.field-hint {
+  font-size: 10.5px;
+  color: var(--invalid-text);
+  font-weight: 500;
+  display: block;
+  margin-top: 1px;
+}
+
+.field-sub {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+/*****************************************************************************
+ * Toggle switch
+ *****************************************************************************/
+
+.toggle-row {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 8px !important;
+}
+
+.toggle-row label:first-child {
+  flex: 1;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 34px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: var(--slate-200);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s var(--ease);
+}
+
+.toggle-slider::before {
+  content: "";
+  position: absolute;
+  height: 12px;
+  width: 12px;
+  left: 3px;
+  top: 3px;
+  border-radius: 50%;
+  background: white;
+  transition: transform 0.2s var(--ease);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background: var(--accent);
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+  transform: translateX(16px);
+}
+
+.toggle-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+  min-width: 45px;
+}
+
+/*****************************************************************************
+ * Config output
+ *****************************************************************************/
+
+.conf-output-section {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--bg-output);
+}
+
+.conf-output-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.45rem 0.9rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.conf-output-title {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: rgba(255, 255, 255, 0.45);
+  letter-spacing: 0.05em;
+}
+
+.conf-client-name {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.04em;
+  margin-left: auto;
+  margin-right: 0.6rem;
+}
+
+.conf-output {
+  flex: 1 1 0;
+  overflow-y: auto;
+  overflow-x: auto;
+  padding: 0.9rem 1rem;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: var(--text-output);
+  white-space: pre;
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+.conf-output::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.conf-output::-webkit-scrollbar-track {
+  background: transparent;
+}
+.conf-output::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+}
+
+.form-section::-webkit-scrollbar {
+  width: 4px;
+}
+.form-section::-webkit-scrollbar-track {
+  background: transparent;
+}
+.form-section::-webkit-scrollbar-thumb {
+  background: var(--slate-200);
+  border-radius: 999px;
+}
+
+/*****************************************************************************
+ * Client tabs
+ *****************************************************************************/
+
+.client-tabs-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.25rem 0;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.client-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  flex: 1;
+}
+
+.client-tab {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  border: 1.5px solid var(--border-mid);
+  border-bottom: none;
+  background: var(--bg);
+  color: var(--text-secondary);
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s var(--ease);
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: -1px;
+}
+
+.client-tab:hover {
+  background: var(--sage-50);
+  color: var(--accent);
+}
+
+.client-tab.active {
+  background: var(--bg-panel);
+  color: var(--accent);
+  border-color: var(--sage-300);
+  border-bottom-color: var(--bg-panel);
+  z-index: 1;
+}
+
+.tab-del {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  font-size: 13px;
+  line-height: 1;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  margin-left: 2px;
+  transition:
+    background 0.1s,
+    color 0.1s;
+}
+
+.tab-del:hover {
+  background: var(--rose-100);
+  color: var(--rose-600);
+}
+
+/*****************************************************************************
+ * Buttons
+ *****************************************************************************/
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid transparent;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s var(--ease);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.btn svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(90, 143, 90, 0.3);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-primary.synced {
+  background: var(--sage-400);
+  animation: pulse-green 0.4s var(--ease);
+}
+
+@keyframes pulse-green {
+  0% {
+    box-shadow: 0 0 0 0 rgba(90, 143, 90, 0.5);
   }
-  .conf-server {
-    height: 100%;
-    width: 90%;
-    margin: 1rem;
-    > form {
-      display: flex;
-      flex-direction: column;
-    }
+  100% {
+    box-shadow: 0 0 0 8px rgba(90, 143, 90, 0);
   }
 }
 
-#right-side-wrapper {
-  width: 60%;
-
-  .conf-client-form {
-    height: 100%;
-    width: 90%;
-    margin: 1rem;
-
-    > form {
-      display: flex;
-      flex-direction: column;
-    }
-  }
-  .conf-server {
-    height: 100%;
-    width: 90%;
-    margin: 1rem;
-    > form {
-      display: flex;
-      flex-direction: column;
-    }
-  }
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: var(--border-mid);
 }
 
-.conf-server-input {
-  min-height: 100%;
+.btn-ghost:hover {
+  background: var(--sage-50);
+  color: var(--accent);
+  border-color: var(--sage-300);
+}
+
+.btn-ghost.copied {
+  color: var(--accent);
+  border-color: var(--sage-300);
+  background: var(--sage-50);
+}
+
+.btn-sm {
+  padding: 3px 9px;
+  font-size: 11px;
+}
+
+.btn-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  border: 1.5px dashed var(--sage-300);
+  background: transparent;
+  color: var(--accent);
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s var(--ease);
+  white-space: nowrap;
+}
+
+.btn-add svg {
+  width: 13px;
+  height: 13px;
+}
+
+.btn-add:hover {
+  background: var(--sage-50);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+/*****************************************************************************
+ * Empty state
+ *****************************************************************************/
+
+.empty-client {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  color: var(--text-muted);
+  text-align: center;
+  flex: 1;
+}
+
+.empty-client svg {
+  opacity: 0.4;
+  color: var(--sage-400);
+}
+
+.empty-client p {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+/*****************************************************************************
+ * Toast
+ *****************************************************************************/
+
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: var(--slate-800);
+  color: white;
+  padding: 0.65rem 1.1rem;
+  border-radius: var(--radius-md);
+  font-size: 12.5px;
+  font-weight: 500;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.25s var(--ease),
+    transform 0.25s var(--ease);
+  z-index: 1000;
+}
+
+.toast-show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast-error {
+  background: var(--rose-600);
+}
+
+/*****************************************************************************
+ * Scrollbars (global Firefox fallback)
+ *****************************************************************************/
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--slate-200) transparent;
 }
