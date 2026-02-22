@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'"
+    />
+    <meta
+      http-equiv="X-Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Wireguard GUI</title>
+  </head>
+  <body>
+    <h1>Wireguard GUI!</h1>
+    <div id="gui-wrapper">
+      <div id="left-side-wrapper" class="side-wrapper">
+        <div class="conf-server-form">
+          <h2>Server Side</h2>
+          <form>
+            <label>Interface:</label>
+            <input value="iface0" />
+            <br />
+            <label>Server address:</label>
+            <input value="11.11.11.1/24" />
+            <br />
+            <label>Port:</label>
+            <input value="port-number" />
+            <br />
+            <label>Clients view each other as in LAN:</label>
+            <input value="true" />
+            <br />
+            <label>List of ports to enable traffic on:</label>
+            <input value="port1, port2" />
+            <br />
+            <label>Server private key:</label>
+            <input value="veryprivatekey" />
+            <br />
+            <label>Server public key:</label>
+            <input value="verypublickey" />
+            <br />
+            <label>Running in docker?:</label>
+            <input value="true" />
+            <br />
+            <label>Docker HOST interface:</label>
+            <input value="iface1" />
+            <br />
+            <button>Sync</button>
+          </form>
+        </div>
+        <div class="conf-server">
+          <form>
+            <label>SERVER CONF</label>
+            <br />
+            <input
+              class="conf-server-input"
+              value="COMPLETE WORKING CONF HERE"
+            />
+          </form>
+        </div>
+      </div>
+      <div id="right-side-wrapper" class="side-wrapper">
+        <div class="conf-client-form">
+          <h2>Client Side</h2>
+          <form>
+            <label>Client picker</label>
+            <select name="Test">
+              <option value="1">Test A</option>
+              <option value="2">Test B</option>
+            </select>
+            <br />
+
+            <label>Internet traffic enabled:</label>
+            <input value="true" />
+            <br />
+            <label>Client private key:</label>
+            <input value="veryprivateclientkey" />
+            <br />
+            <label>Client private key:</label>
+            <input value="verypublicclientkey" />
+            <br />
+          </form>
+        </div>
+        <div class="conf-server">
+          <form>
+            <label>SERVER CONF</label>
+            <br />
+            <input
+              class="conf-server-input"
+              value="COMPLETE WORKING CONF HERE"
+            />
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="gui.js"></script>
+  </body>
+</html>
