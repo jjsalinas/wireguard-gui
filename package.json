@@ -24,12 +24,19 @@
   "devDependencies": {
     "electron": "^40.6.0",
     "electron-builder": "^26.8.1",
-    "prettier": "^3.8.1"
+    "prettier": "^3.8.1",
+    "typescript": "^5.9.3"
   },
   "build": {
     "appId": "io.github.jjsalinas.wireguard-gui",
-    "mac": { "target": "dmg" },
-    "win": { "target": "nsis" },
-    "linux": { "target": "AppImage" }
+    "mac": {
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
   }
 }
