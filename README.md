@@ -9,13 +9,13 @@ Instead of hand-editing `.conf` files, you fill in a form and get ready-to-use W
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) v18 or later
-- npm
+- pnpm
 
 ### Install and run
 
 ```bash
-npm install
-npm start
+pnpm install
+pnpm start
 ```
 
 ## Usage
