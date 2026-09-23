@@ -22,9 +22,9 @@
     "format:check": "prettier --check \"src/**/*.{js,json,css,md,html}\""
   },
   "devDependencies": {
-    "electron": "^40.6.0",
-    "electron-builder": "^26.8.1",
-    "prettier": "^3.8.1",
+    "electron": "^40.10.6",
+    "electron-builder": "^26.15.3",
+    "prettier": "^3.9.8",
     "typescript": "^5.9.3"
   },
   "build": {
